@@ -12010,7 +12010,7 @@ Ideally, we would like 100% of human images with a detected face and 0% of dog i
 
 <span class="n">dog_faces</span> <span class="o">=</span> <span class="p">[</span><span class="n">face_detector</span><span class="p">(</span><span class="n">dog_file</span><span class="p">)</span> <span class="k">for</span> <span class="n">dog_file</span> <span class="ow">in</span> <span class="n">dog_files_short</span><span class="p">]</span>
 <span class="n">percentage_dog</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dog_faces</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">dog_faces</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dog Sample - No Human Face Detected Percent: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">percentage_dog</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dog Sample - Human Face Detected Percent: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">percentage_dog</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -12028,7 +12028,7 @@ Ideally, we would like 100% of human images with a detected face and 0% of dog i
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Human Sample - Human Face Detected Percent: 98.0
-Dog Sample - No Human Face Detected Percent: 14.000000000000002
+Dog Sample - Human Face Detected Percent: 14.000000000000002
 </pre>
 </div>
 </div>
@@ -12177,12 +12177,11 @@ Dog Sample - No Human Face Detected Percent: 14.000000000000002
 <span class="k">def</span> <span class="nf">dog_detector</span><span class="p">(</span><span class="n">img_path</span><span class="p">):</span>
     <span class="c1">## Complete the function.</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">VGG16_predict</span><span class="p">(</span><span class="n">img_path</span><span class="p">)</span>
-    <span class="n">dog_results</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">151</span><span class="p">:</span><span class="mi">269</span><span class="p">]</span>
+    <span class="n">dog_results</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="n">pred_tensor</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dog_results</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">pred_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dog_results</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">pred</span> <span class="o">=</span> <span class="n">pred_tensor</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">pred_tensor</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="c1"># true/false</span>
+    <span class="k">return</span> <span class="n">pred</span> <span class="o">&gt;</span> <span class="mi">150</span> <span class="ow">and</span> <span class="n">pred</span> <span class="o">&lt;</span> <span class="mi">269</span> <span class="c1"># true/false</span>
 </pre></div>
 
 </div>
@@ -12245,8 +12244,8 @@ Dog Sample - No Human Face Detected Percent: 14.000000000000002
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Human Sample - Dog Detected Percent: 100.0
-Dog Sample - Dog Detected Percent: 100.0
+<pre>Human Sample - Dog Detected Percent: 1.0
+Dog Sample - Dog Detected Percent: 94.0
 </pre>
 </div>
 </div>
@@ -12638,83 +12637,81 @@ the input images were between 300x500 and 500x300 in original quality so the res
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>2018-11-17 02:49:07.367938 - Epoch: 1 	Training Loss: 4.882684 	Validation Loss: 4.863315
-Epoch saving checkpoint: 	Validation Loss: 4.863315 	Existing Validation Loss: inf
-2018-11-17 02:50:31.959796 - Epoch: 2 	Training Loss: 4.804291 	Validation Loss: 4.736497
-Epoch saving checkpoint: 	Validation Loss: 4.736497 	Existing Validation Loss: 4.863315
-2018-11-17 02:51:56.661524 - Epoch: 3 	Training Loss: 4.714494 	Validation Loss: 4.702022
-Epoch saving checkpoint: 	Validation Loss: 4.702022 	Existing Validation Loss: 4.736497
-2018-11-17 02:53:21.370708 - Epoch: 4 	Training Loss: 4.656286 	Validation Loss: 4.639336
-Epoch saving checkpoint: 	Validation Loss: 4.639336 	Existing Validation Loss: 4.702022
-2018-11-17 02:54:46.987965 - Epoch: 5 	Training Loss: 4.563628 	Validation Loss: 4.552942
-Epoch saving checkpoint: 	Validation Loss: 4.552942 	Existing Validation Loss: 4.639336
-2018-11-17 02:56:12.138090 - Epoch: 6 	Training Loss: 4.469138 	Validation Loss: 4.495746
-Epoch saving checkpoint: 	Validation Loss: 4.495746 	Existing Validation Loss: 4.552942
-2018-11-17 02:57:37.072004 - Epoch: 7 	Training Loss: 4.402463 	Validation Loss: 4.405604
-Epoch saving checkpoint: 	Validation Loss: 4.405604 	Existing Validation Loss: 4.495746
-2018-11-17 02:59:01.575936 - Epoch: 8 	Training Loss: 4.331815 	Validation Loss: 4.350250
-Epoch saving checkpoint: 	Validation Loss: 4.350250 	Existing Validation Loss: 4.405604
-2018-11-17 03:00:26.093938 - Epoch: 9 	Training Loss: 4.287316 	Validation Loss: 4.311791
-Epoch saving checkpoint: 	Validation Loss: 4.311791 	Existing Validation Loss: 4.350250
-2018-11-17 03:01:50.562089 - Epoch: 10 	Training Loss: 4.230525 	Validation Loss: 4.269927
-Epoch saving checkpoint: 	Validation Loss: 4.269927 	Existing Validation Loss: 4.311791
-2018-11-17 03:03:15.082164 - Epoch: 11 	Training Loss: 4.206081 	Validation Loss: 4.311896
-2018-11-17 03:04:40.071723 - Epoch: 12 	Training Loss: 4.144166 	Validation Loss: 4.234793
-Epoch saving checkpoint: 	Validation Loss: 4.234793 	Existing Validation Loss: 4.269927
-2018-11-17 03:06:06.101896 - Epoch: 13 	Training Loss: 4.106161 	Validation Loss: 4.241526
-2018-11-17 03:07:30.564817 - Epoch: 14 	Training Loss: 4.053003 	Validation Loss: 4.210520
-Epoch saving checkpoint: 	Validation Loss: 4.210520 	Existing Validation Loss: 4.234793
-2018-11-17 03:08:55.785518 - Epoch: 15 	Training Loss: 4.029084 	Validation Loss: 4.135848
-Epoch saving checkpoint: 	Validation Loss: 4.135848 	Existing Validation Loss: 4.210520
-2018-11-17 03:10:21.377195 - Epoch: 16 	Training Loss: 3.992483 	Validation Loss: 4.175023
-2018-11-17 03:11:46.076253 - Epoch: 17 	Training Loss: 3.947093 	Validation Loss: 4.160212
-2018-11-17 03:13:10.210624 - Epoch: 18 	Training Loss: 3.938068 	Validation Loss: 4.070835
-Epoch saving checkpoint: 	Validation Loss: 4.070835 	Existing Validation Loss: 4.135848
-2018-11-17 03:14:35.134999 - Epoch: 19 	Training Loss: 3.924240 	Validation Loss: 4.095044
-2018-11-17 03:15:59.784714 - Epoch: 20 	Training Loss: 3.865330 	Validation Loss: 4.062478
-Epoch saving checkpoint: 	Validation Loss: 4.062478 	Existing Validation Loss: 4.070835
-2018-11-17 03:17:24.192916 - Epoch: 21 	Training Loss: 3.843790 	Validation Loss: 4.016015
-Epoch saving checkpoint: 	Validation Loss: 4.016015 	Existing Validation Loss: 4.062478
-2018-11-17 03:18:48.868318 - Epoch: 22 	Training Loss: 3.803865 	Validation Loss: 3.978007
-Epoch saving checkpoint: 	Validation Loss: 3.978007 	Existing Validation Loss: 4.016015
-2018-11-17 03:20:13.786493 - Epoch: 23 	Training Loss: 3.785534 	Validation Loss: 3.983404
-2018-11-17 03:21:38.718098 - Epoch: 24 	Training Loss: 3.789029 	Validation Loss: 3.966343
-Epoch saving checkpoint: 	Validation Loss: 3.966343 	Existing Validation Loss: 3.978007
-2018-11-17 03:23:03.117354 - Epoch: 25 	Training Loss: 3.757681 	Validation Loss: 3.969366
-2018-11-17 03:24:27.434769 - Epoch: 26 	Training Loss: 3.702255 	Validation Loss: 3.950402
-Epoch saving checkpoint: 	Validation Loss: 3.950402 	Existing Validation Loss: 3.966343
-2018-11-17 03:25:52.037680 - Epoch: 27 	Training Loss: 3.695861 	Validation Loss: 3.934285
-Epoch saving checkpoint: 	Validation Loss: 3.934285 	Existing Validation Loss: 3.950402
-2018-11-17 03:27:16.833781 - Epoch: 28 	Training Loss: 3.659795 	Validation Loss: 3.841416
-Epoch saving checkpoint: 	Validation Loss: 3.841416 	Existing Validation Loss: 3.934285
-2018-11-17 03:28:41.466003 - Epoch: 29 	Training Loss: 3.669090 	Validation Loss: 3.940905
-2018-11-17 03:30:06.339511 - Epoch: 30 	Training Loss: 3.642767 	Validation Loss: 3.902353
-2018-11-17 03:31:30.993308 - Epoch: 31 	Training Loss: 3.605475 	Validation Loss: 3.874486
-2018-11-17 03:32:55.131871 - Epoch: 32 	Training Loss: 3.582218 	Validation Loss: 3.800869
-Epoch saving checkpoint: 	Validation Loss: 3.800869 	Existing Validation Loss: 3.841416
-2018-11-17 03:34:19.524125 - Epoch: 33 	Training Loss: 3.556068 	Validation Loss: 3.840211
-2018-11-17 03:35:44.559618 - Epoch: 34 	Training Loss: 3.526802 	Validation Loss: 3.875684
-2018-11-17 03:37:09.141719 - Epoch: 35 	Training Loss: 3.518555 	Validation Loss: 3.824574
-2018-11-17 03:38:33.546025 - Epoch: 36 	Training Loss: 3.479037 	Validation Loss: 3.829188
-2018-11-17 03:39:57.873618 - Epoch: 37 	Training Loss: 3.467523 	Validation Loss: 3.800266
-Epoch saving checkpoint: 	Validation Loss: 3.800266 	Existing Validation Loss: 3.800869
-2018-11-17 03:41:22.323054 - Epoch: 38 	Training Loss: 3.442073 	Validation Loss: 3.881887
-2018-11-17 03:42:46.839456 - Epoch: 39 	Training Loss: 3.441090 	Validation Loss: 3.865570
-2018-11-17 03:44:11.105006 - Epoch: 40 	Training Loss: 3.401396 	Validation Loss: 3.776214
-Epoch saving checkpoint: 	Validation Loss: 3.776214 	Existing Validation Loss: 3.800266
-2018-11-17 03:45:35.757359 - Epoch: 41 	Training Loss: 3.377894 	Validation Loss: 3.805286
-2018-11-17 03:47:01.277230 - Epoch: 42 	Training Loss: 3.376049 	Validation Loss: 3.802273
-2018-11-17 03:48:26.072940 - Epoch: 43 	Training Loss: 3.361003 	Validation Loss: 3.765911
-Epoch saving checkpoint: 	Validation Loss: 3.765911 	Existing Validation Loss: 3.776214
-2018-11-17 03:49:50.339504 - Epoch: 44 	Training Loss: 3.349295 	Validation Loss: 3.756773
-Epoch saving checkpoint: 	Validation Loss: 3.756773 	Existing Validation Loss: 3.765911
-2018-11-17 03:51:14.513104 - Epoch: 45 	Training Loss: 3.341149 	Validation Loss: 3.837916
-2018-11-17 03:52:39.377490 - Epoch: 46 	Training Loss: 3.289677 	Validation Loss: 3.760600
-2018-11-17 03:54:03.859368 - Epoch: 47 	Training Loss: 3.290887 	Validation Loss: 3.728419
-Epoch saving checkpoint: 	Validation Loss: 3.728419 	Existing Validation Loss: 3.756773
-2018-11-17 03:55:28.668289 - Epoch: 48 	Training Loss: 3.278123 	Validation Loss: 3.751290
-2018-11-17 03:56:52.800816 - Epoch: 49 	Training Loss: 3.279594 	Validation Loss: 3.864854
-2018-11-17 03:58:17.215428 - Epoch: 50 	Training Loss: 3.258661 	Validation Loss: 3.741845
+<pre>2018-11-21 02:01:09.484032 - Epoch: 1 	Training Loss: 4.882410 	Validation Loss: 4.855820
+Epoch saving checkpoint: 	Validation Loss: 4.855820 	Existing Validation Loss: inf
+2018-11-21 02:02:33.928900 - Epoch: 2 	Training Loss: 4.804301 	Validation Loss: 4.747064
+Epoch saving checkpoint: 	Validation Loss: 4.747064 	Existing Validation Loss: 4.855820
+2018-11-21 02:03:58.251494 - Epoch: 3 	Training Loss: 4.724976 	Validation Loss: 4.707869
+Epoch saving checkpoint: 	Validation Loss: 4.707869 	Existing Validation Loss: 4.747064
+2018-11-21 02:05:22.646524 - Epoch: 4 	Training Loss: 4.699613 	Validation Loss: 4.667877
+Epoch saving checkpoint: 	Validation Loss: 4.667877 	Existing Validation Loss: 4.707869
+2018-11-21 02:06:47.055526 - Epoch: 5 	Training Loss: 4.612386 	Validation Loss: 4.564351
+Epoch saving checkpoint: 	Validation Loss: 4.564351 	Existing Validation Loss: 4.667877
+2018-11-21 02:08:11.294818 - Epoch: 6 	Training Loss: 4.516085 	Validation Loss: 4.531559
+Epoch saving checkpoint: 	Validation Loss: 4.531559 	Existing Validation Loss: 4.564351
+2018-11-21 02:09:36.155793 - Epoch: 7 	Training Loss: 4.452268 	Validation Loss: 4.430075
+Epoch saving checkpoint: 	Validation Loss: 4.430075 	Existing Validation Loss: 4.531559
+2018-11-21 02:11:01.316718 - Epoch: 8 	Training Loss: 4.384969 	Validation Loss: 4.431947
+2018-11-21 02:12:25.135201 - Epoch: 9 	Training Loss: 4.343863 	Validation Loss: 4.342034
+Epoch saving checkpoint: 	Validation Loss: 4.342034 	Existing Validation Loss: 4.430075
+2018-11-21 02:13:49.244766 - Epoch: 10 	Training Loss: 4.304698 	Validation Loss: 4.316299
+Epoch saving checkpoint: 	Validation Loss: 4.316299 	Existing Validation Loss: 4.342034
+2018-11-21 02:15:12.871134 - Epoch: 11 	Training Loss: 4.231963 	Validation Loss: 4.328224
+2018-11-21 02:16:36.629467 - Epoch: 12 	Training Loss: 4.195240 	Validation Loss: 4.345503
+2018-11-21 02:18:00.820043 - Epoch: 13 	Training Loss: 4.144969 	Validation Loss: 4.300244
+Epoch saving checkpoint: 	Validation Loss: 4.300244 	Existing Validation Loss: 4.316299
+2018-11-21 02:19:24.974315 - Epoch: 14 	Training Loss: 4.102313 	Validation Loss: 4.209821
+Epoch saving checkpoint: 	Validation Loss: 4.209821 	Existing Validation Loss: 4.300244
+2018-11-21 02:20:49.067955 - Epoch: 15 	Training Loss: 4.066690 	Validation Loss: 4.215829
+2018-11-21 02:22:12.896464 - Epoch: 16 	Training Loss: 4.033323 	Validation Loss: 4.140880
+Epoch saving checkpoint: 	Validation Loss: 4.140880 	Existing Validation Loss: 4.209821
+2018-11-21 02:23:36.744249 - Epoch: 17 	Training Loss: 3.968697 	Validation Loss: 4.171352
+2018-11-21 02:25:00.478456 - Epoch: 18 	Training Loss: 3.965409 	Validation Loss: 4.110462
+Epoch saving checkpoint: 	Validation Loss: 4.110462 	Existing Validation Loss: 4.140880
+2018-11-21 02:26:24.650095 - Epoch: 19 	Training Loss: 3.927521 	Validation Loss: 4.078496
+Epoch saving checkpoint: 	Validation Loss: 4.078496 	Existing Validation Loss: 4.110462
+2018-11-21 02:27:49.119235 - Epoch: 20 	Training Loss: 3.892905 	Validation Loss: 4.045347
+Epoch saving checkpoint: 	Validation Loss: 4.045347 	Existing Validation Loss: 4.078496
+2018-11-21 02:29:13.675932 - Epoch: 21 	Training Loss: 3.871999 	Validation Loss: 4.088210
+2018-11-21 02:30:38.085415 - Epoch: 22 	Training Loss: 3.826856 	Validation Loss: 3.984350
+Epoch saving checkpoint: 	Validation Loss: 3.984350 	Existing Validation Loss: 4.045347
+2018-11-21 02:32:02.174059 - Epoch: 23 	Training Loss: 3.772507 	Validation Loss: 3.979960
+Epoch saving checkpoint: 	Validation Loss: 3.979960 	Existing Validation Loss: 3.984350
+2018-11-21 02:33:25.889011 - Epoch: 24 	Training Loss: 3.744365 	Validation Loss: 3.954368
+Epoch saving checkpoint: 	Validation Loss: 3.954368 	Existing Validation Loss: 3.979960
+2018-11-21 02:34:49.836983 - Epoch: 25 	Training Loss: 3.735037 	Validation Loss: 3.981206
+2018-11-21 02:36:13.329247 - Epoch: 26 	Training Loss: 3.686240 	Validation Loss: 3.954521
+2018-11-21 02:37:36.957646 - Epoch: 27 	Training Loss: 3.683204 	Validation Loss: 3.902350
+Epoch saving checkpoint: 	Validation Loss: 3.902350 	Existing Validation Loss: 3.954368
+2018-11-21 02:39:01.567268 - Epoch: 28 	Training Loss: 3.655204 	Validation Loss: 3.938463
+2018-11-21 02:40:26.381723 - Epoch: 29 	Training Loss: 3.624266 	Validation Loss: 3.839209
+Epoch saving checkpoint: 	Validation Loss: 3.839209 	Existing Validation Loss: 3.902350
+2018-11-21 02:41:50.865050 - Epoch: 30 	Training Loss: 3.601633 	Validation Loss: 3.880047
+2018-11-21 02:43:15.527625 - Epoch: 31 	Training Loss: 3.571224 	Validation Loss: 3.867098
+2018-11-21 02:44:39.544252 - Epoch: 32 	Training Loss: 3.557327 	Validation Loss: 3.856609
+2018-11-21 02:46:03.333690 - Epoch: 33 	Training Loss: 3.520831 	Validation Loss: 3.938189
+2018-11-21 02:47:28.055883 - Epoch: 34 	Training Loss: 3.481419 	Validation Loss: 3.762632
+Epoch saving checkpoint: 	Validation Loss: 3.762632 	Existing Validation Loss: 3.839209
+2018-11-21 02:48:52.796900 - Epoch: 35 	Training Loss: 3.476469 	Validation Loss: 3.944769
+2018-11-21 02:50:16.961242 - Epoch: 36 	Training Loss: 3.430680 	Validation Loss: 3.823407
+2018-11-21 02:51:40.989118 - Epoch: 37 	Training Loss: 3.433664 	Validation Loss: 3.887027
+2018-11-21 02:53:04.937746 - Epoch: 38 	Training Loss: 3.412761 	Validation Loss: 3.867209
+2018-11-21 02:54:28.821186 - Epoch: 39 	Training Loss: 3.388842 	Validation Loss: 3.746608
+Epoch saving checkpoint: 	Validation Loss: 3.746608 	Existing Validation Loss: 3.762632
+2018-11-21 02:55:53.093327 - Epoch: 40 	Training Loss: 3.386162 	Validation Loss: 3.802645
+2018-11-21 02:57:16.606760 - Epoch: 41 	Training Loss: 3.362043 	Validation Loss: 3.756746
+2018-11-21 02:58:40.260642 - Epoch: 42 	Training Loss: 3.330226 	Validation Loss: 3.812928
+2018-11-21 03:00:04.417583 - Epoch: 43 	Training Loss: 3.324034 	Validation Loss: 3.800840
+2018-11-21 03:01:27.970972 - Epoch: 44 	Training Loss: 3.316993 	Validation Loss: 3.825144
+2018-11-21 03:02:51.540066 - Epoch: 45 	Training Loss: 3.282774 	Validation Loss: 3.727863
+Epoch saving checkpoint: 	Validation Loss: 3.727863 	Existing Validation Loss: 3.746608
+2018-11-21 03:04:16.103216 - Epoch: 46 	Training Loss: 3.254044 	Validation Loss: 3.804422
+2018-11-21 03:05:40.369648 - Epoch: 47 	Training Loss: 3.262848 	Validation Loss: 3.713147
+Epoch saving checkpoint: 	Validation Loss: 3.713147 	Existing Validation Loss: 3.727863
+2018-11-21 03:07:04.291658 - Epoch: 48 	Training Loss: 3.231662 	Validation Loss: 3.691305
+Epoch saving checkpoint: 	Validation Loss: 3.691305 	Existing Validation Loss: 3.713147
+2018-11-21 03:08:28.184820 - Epoch: 49 	Training Loss: 3.249777 	Validation Loss: 3.797461
+2018-11-21 03:09:51.952860 - Epoch: 50 	Training Loss: 3.183201 	Validation Loss: 3.799002
 </pre>
 </div>
 </div>
@@ -12783,10 +12780,10 @@ Epoch saving checkpoint: 	Validation Loss: 3.728419 	Existing Validation Loss: 3
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Test Loss: 3.717507
+<pre>Test Loss: 3.798327
 
 
-Test Accuracy: 14% (119/836)
+Test Accuracy: 14% (120/836)
 </pre>
 </div>
 </div>
@@ -12942,37 +12939,38 @@ The data set is similar to that of what VGG16 was trained on, dogs are even a su
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>start
-2018-11-17 03:58:29.513511
-2018-11-17 04:00:41.952922 - Epoch: 1 	Training Loss: 3.173926 	Validation Loss: 2.464276
-Epoch saving checkpoint: 	Validation Loss: 2.464276 	Existing Validation Loss: inf
-2018-11-17 04:02:54.953605 - Epoch: 2 	Training Loss: 1.914295 	Validation Loss: 2.214454
-Epoch saving checkpoint: 	Validation Loss: 2.214454 	Existing Validation Loss: 2.464276
-2018-11-17 04:05:11.280880 - Epoch: 3 	Training Loss: 1.687579 	Validation Loss: 2.286498
-2018-11-17 04:07:23.987541 - Epoch: 4 	Training Loss: 1.533789 	Validation Loss: 2.947197
-2018-11-17 04:09:36.736448 - Epoch: 5 	Training Loss: 1.472685 	Validation Loss: 1.704653
-Epoch saving checkpoint: 	Validation Loss: 1.704653 	Existing Validation Loss: 2.214454
-2018-11-17 04:11:53.845310 - Epoch: 6 	Training Loss: 1.367458 	Validation Loss: 2.862891
-2018-11-17 04:14:06.416094 - Epoch: 7 	Training Loss: 1.339522 	Validation Loss: 1.623382
-Epoch saving checkpoint: 	Validation Loss: 1.623382 	Existing Validation Loss: 1.704653
-2018-11-17 04:16:22.535029 - Epoch: 8 	Training Loss: 1.267576 	Validation Loss: 1.605087
-Epoch saving checkpoint: 	Validation Loss: 1.605087 	Existing Validation Loss: 1.623382
-2018-11-17 04:18:38.299687 - Epoch: 9 	Training Loss: 1.215380 	Validation Loss: 1.771137
-2018-11-17 04:20:50.305671 - Epoch: 10 	Training Loss: 1.204275 	Validation Loss: 2.200909
-2018-11-17 04:23:03.093202 - Epoch: 11 	Training Loss: 1.186984 	Validation Loss: 1.545725
-Epoch saving checkpoint: 	Validation Loss: 1.545725 	Existing Validation Loss: 1.605087
-2018-11-17 04:25:19.113815 - Epoch: 12 	Training Loss: 1.148386 	Validation Loss: 1.709984
-2018-11-17 04:27:31.734316 - Epoch: 13 	Training Loss: 1.089363 	Validation Loss: 1.589040
-2018-11-17 04:29:44.209915 - Epoch: 14 	Training Loss: 1.063300 	Validation Loss: 1.462272
-Epoch saving checkpoint: 	Validation Loss: 1.462272 	Existing Validation Loss: 1.545725
-2018-11-17 04:32:00.072739 - Epoch: 15 	Training Loss: 1.067823 	Validation Loss: 1.439080
-Epoch saving checkpoint: 	Validation Loss: 1.439080 	Existing Validation Loss: 1.462272
-2018-11-17 04:34:16.393089 - Epoch: 16 	Training Loss: 1.007595 	Validation Loss: 1.932017
-2018-11-17 04:36:29.794205 - Epoch: 17 	Training Loss: 0.987927 	Validation Loss: 1.441091
-2018-11-17 04:38:42.546582 - Epoch: 18 	Training Loss: 0.999062 	Validation Loss: 1.535224
-2018-11-17 04:40:54.879438 - Epoch: 19 	Training Loss: 0.953771 	Validation Loss: 1.448410
-2018-11-17 04:43:07.513717 - Epoch: 20 	Training Loss: 0.951347 	Validation Loss: 1.507419
+2018-11-21 03:10:03.007651
+2018-11-21 03:12:14.595129 - Epoch: 1 	Training Loss: 3.178083 	Validation Loss: 3.197938
+Epoch saving checkpoint: 	Validation Loss: 3.197938 	Existing Validation Loss: inf
+2018-11-21 03:14:29.803760 - Epoch: 2 	Training Loss: 1.953174 	Validation Loss: 2.010437
+Epoch saving checkpoint: 	Validation Loss: 2.010437 	Existing Validation Loss: 3.197938
+2018-11-21 03:16:44.824833 - Epoch: 3 	Training Loss: 1.677935 	Validation Loss: 1.927938
+Epoch saving checkpoint: 	Validation Loss: 1.927938 	Existing Validation Loss: 2.010437
+2018-11-21 03:19:00.193199 - Epoch: 4 	Training Loss: 1.543404 	Validation Loss: 2.573124
+2018-11-21 03:21:11.675460 - Epoch: 5 	Training Loss: 1.430784 	Validation Loss: 1.807746
+Epoch saving checkpoint: 	Validation Loss: 1.807746 	Existing Validation Loss: 1.927938
+2018-11-21 03:23:27.131924 - Epoch: 6 	Training Loss: 1.356445 	Validation Loss: 1.901525
+2018-11-21 03:25:39.447381 - Epoch: 7 	Training Loss: 1.284906 	Validation Loss: 1.662279
+Epoch saving checkpoint: 	Validation Loss: 1.662279 	Existing Validation Loss: 1.807746
+2018-11-21 03:27:54.760973 - Epoch: 8 	Training Loss: 1.269909 	Validation Loss: 1.904365
+2018-11-21 03:30:06.671192 - Epoch: 9 	Training Loss: 1.215772 	Validation Loss: 1.644746
+Epoch saving checkpoint: 	Validation Loss: 1.644746 	Existing Validation Loss: 1.662279
+2018-11-21 03:32:22.460474 - Epoch: 10 	Training Loss: 1.189665 	Validation Loss: 1.796935
+2018-11-21 03:34:34.735062 - Epoch: 11 	Training Loss: 1.151738 	Validation Loss: 1.798334
+2018-11-21 03:36:47.630914 - Epoch: 12 	Training Loss: 1.154832 	Validation Loss: 1.505885
+Epoch saving checkpoint: 	Validation Loss: 1.505885 	Existing Validation Loss: 1.644746
+2018-11-21 03:39:02.947844 - Epoch: 13 	Training Loss: 1.111780 	Validation Loss: 1.386011
+Epoch saving checkpoint: 	Validation Loss: 1.386011 	Existing Validation Loss: 1.505885
+2018-11-21 03:41:18.647099 - Epoch: 14 	Training Loss: 1.072075 	Validation Loss: 1.724784
+2018-11-21 03:43:30.654630 - Epoch: 15 	Training Loss: 1.052790 	Validation Loss: 1.408401
+2018-11-21 03:45:42.397562 - Epoch: 16 	Training Loss: 1.024227 	Validation Loss: 1.472087
+2018-11-21 03:47:54.504892 - Epoch: 17 	Training Loss: 1.014638 	Validation Loss: 1.836681
+2018-11-21 03:50:06.605823 - Epoch: 18 	Training Loss: 1.006103 	Validation Loss: 1.279862
+Epoch saving checkpoint: 	Validation Loss: 1.279862 	Existing Validation Loss: 1.386011
+2018-11-21 03:52:22.284571 - Epoch: 19 	Training Loss: 0.952815 	Validation Loss: 1.531190
+2018-11-21 03:54:35.101883 - Epoch: 20 	Training Loss: 0.943237 	Validation Loss: 1.351580
 end
-2018-11-17 04:43:07.514446
+2018-11-21 03:54:35.102186
 </pre>
 </div>
 </div>
@@ -13012,10 +13010,10 @@ end
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Test Loss: 1.467311
+<pre>Test Loss: 1.323043
 
 
-Test Accuracy: 60% (507/836)
+Test Accuracy: 63% (530/836)
 </pre>
 </div>
 </div>
@@ -13184,7 +13182,7 @@ It is acceptable output. Some of the people idenifications seem wrong but it rec
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Human detected - Resembling a American foxhound dog
+<pre>Human detected - Resembling a Ibizan hound dog
 </pre>
 </div>
 </div>
@@ -13210,7 +13208,7 @@ It is acceptable output. Some of the people idenifications seem wrong but it rec
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Human detected - Resembling a Boxer dog
+<pre>Human detected - Resembling a Pharaoh hound dog
 </pre>
 </div>
 </div>
@@ -13236,7 +13234,7 @@ It is acceptable output. Some of the people idenifications seem wrong but it rec
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Human detected - Resembling a Afghan hound dog
+<pre>Human detected - Resembling a Welsh springer spaniel dog
 </pre>
 </div>
 </div>
@@ -13288,7 +13286,7 @@ It is acceptable output. Some of the people idenifications seem wrong but it rec
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Dog detected - a Mastiff dog
+<pre>No dog or human found
 </pre>
 </div>
 </div>
@@ -13314,7 +13312,7 @@ It is acceptable output. Some of the people idenifications seem wrong but it rec
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Dog detected - a Beagle dog
+<pre>No dog or human found
 </pre>
 </div>
 </div>
